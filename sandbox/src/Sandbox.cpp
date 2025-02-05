@@ -1,25 +1,3 @@
-# Log Library
-
-## Getting started
-
-To build this library, clone the repository and run the provided `Premake5` script in the `dev` folder. If using `Windows` with `Visual Studio 2022`, there is a provided `bat` file that builds a solution file.
-
-Open the project in your IDE of choice and build the project. The library will be built in the `bin` folder. Running the the `Sandbox` project will ensure that the library is working correctly.
-
-## Usage
-
-To use the library, include the `Log.h` header file in your project. The logger can be accessed from anywhere in your code.
-
-Log messages include a severity level, information about the file and line number, and the message itself. This is displayed with suitable colors corresponding to the selected severity. The logger is also configured to only log messages for specified build types.
-
-![Logger](documentation/example.png)
-
-## Example of usage
-
-Below is an example program that demonstrates how to use the logging system.
-
-```c++
-// Sandbox.cpp
 #include "Log.h"
 
 int main()
@@ -73,4 +51,3 @@ int main()
 		AE_LOG_CONSOLE_ALL(AE_ERROR, e.what());
 	}
 }
-```
