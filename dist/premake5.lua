@@ -1,8 +1,6 @@
-workspace "Game"
+workspace "Log"
     architecture "x64"
-    configurations { "Debug", "Release" }
-
-    defines { "GLEW_STATIC" }
+    configurations { "Dist" }
 
     filter "system:windows"
         defines { "AE_WINDOWS" }
@@ -13,44 +11,35 @@ workspace "Game"
     filter "system:linux"
         defines { "AE_LINUX" }
 
-    filter "configurations:Debug"
-        defines { "AE_DEBUG" }
-        symbols "On"
-
-    filter "configurations:Release"
-        defines { "AE_RELEASE" }
+    filter "configurations:Dist"
+        defines { "AE_DIST" }
         optimize "On"
 
     filter "action:vs*"
-        startproject "Game"
+        startproject "Sandbox"
 
-project "Engine"
+project "Log"
     kind "StaticLib"
     language "C++"
     cppdialect "C++20"
     targetdir "bin/%{cfg.buildcfg}"
     objdir "obj/%{cfg.buildcfg}"
 
-    files { "../engine/src/**.cpp", "../engine/src/**.h", "../engine/include/**.h", "../engine/vendor/**.cpp", "../engine/vendor/**.h" }
+    files { "../log-lib/src/**.cpp", "../log-lib/src/**.h", "../log-lib/include/**.h" }
 
-    includedirs { "../dep/GLFW/include", "../dep/GLEW/include", "../engine/include", "../engine/src", "../engine/vendor" }
-
-    links { "opengl32.lib", "../dep/GLFW/lib/glfw3.lib", "../dep/GLEW/lib/glew32s.lib" }
+    includedirs { "../log-lib/include", "../log-lib/src" }
 
     pchheader "general/pch.h"
-    pchsource "../engine/src/general/pch.cpp" 
+    pchsource "../log-lib/src/general/pch.cpp" 
 
-project "Game"
+project "Sandbox"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"
     targetdir "bin/%{cfg.buildcfg}"
     objdir "obj/%{cfg.buildcfg}"
   
-    files { "../game/src/**.cpp", "../game/src/**.h" }
-    includedirs { "../dep/GLFW/include", "../dep/GLEW/include", "../engine/include", "../game/src" }
+    files { "../sandbox/src/**.cpp", "../sandbox/src/**.h" }
+    includedirs { "../log-lib/include", "../sandbox/src" }
 
-    pchheader "general/pch.h"
-    pchsource "../game/src/general/pch.cpp" 
-
-    links { "opengl32.lib", "../dep/GLFW/lib/glfw3.lib", "../dep/GLEW/lib/glew32s.lib", "Engine" }
+    links { "Log" }

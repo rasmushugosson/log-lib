@@ -25,7 +25,7 @@ Below is an example program that demonstrates how to use the logging system.
 int main()
 {
 	// Author: Rasmus Hugosson
-	// Date: 2025-02-05
+	// Date: 2025-02-07
 
 	// Description: This is a simple example of how to use the logging system
 
@@ -72,5 +72,12 @@ int main()
 		// The exception can be caught as usual and the message can be logged
 		AE_LOG_CONSOLE_ALL(AE_ERROR, e.what());
 	}
+
+#ifdef AE_DIST
+	// No messages are printed for distribution builds
+	// If something is to be logged in a distribution build, it can be done with standard C++ functions
+	std::cout << "This message is only displayed in distribution builds" << std::endl;
+#endif // AE_DIST
+	return 0;
 }
 ```
