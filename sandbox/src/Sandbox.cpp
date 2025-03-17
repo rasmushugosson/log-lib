@@ -3,7 +3,7 @@
 int main()
 {
 	// Author: Rasmus Hugosson
-	// Date: 2025-02-05
+	// Date: 2025-03-17
 
 	// Description: This is a simple example of how to use the logging system
 
@@ -50,6 +50,16 @@ int main()
 		// The exception can be caught as usual and the message can be logged
 		AE_LOG_CONSOLE_ALL(AE_ERROR, e.what());
 	}
+
+	// Execution time can also be measured with the Timer class
+	ae::Timer timer;
+	timer.Start();
+
+	// We can then make the thread sleep for a while
+	ae::Time::Wait(1.0);
+
+	// And then measure the elapsed time
+	AE_LOG_CONSOLE(AE_INFO, "Elapsed time: " << timer.GetElapsedTime() << " s");
 
 #ifdef AE_DIST
 	// No messages are printed for distribution builds

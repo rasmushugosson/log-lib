@@ -422,7 +422,7 @@ namespace ae
 		}
 	};
 
-#define AE_THROW_INVALID_OPERATION_ERROR(m) throw ae::InvalidOperationError(__FILE__, __LINE__, std::ostringstream() << m)
+#define AE_THROW_GRAPHICS_ERROR(m) throw ae::InvalidOperationError(__FILE__, __LINE__, std::ostringstream() << m)
 
 	class GraphicsError : public std::runtime_error
 	{
@@ -431,5 +431,34 @@ namespace ae
 			: std::runtime_error(FormatError("Graphics error", file, line, message))
 		{
 		}
+	};
+
+	// Time ---------------------------------------------------------------------------------------------------------------------------------------------
+
+	class Time
+	{
+	public:
+		static void Wait(double seconds);
+	};
+
+	class Timer
+	{
+	public:
+		Timer();
+		~Timer();
+
+		void Start();
+		void Stop();
+		void Reset();
+
+		double GetElapsedTime() const;
+	private:
+#ifdef AE_WINDOWS
+		LARGE_INTEGER m_Frequency;
+		LARGE_INTEGER m_StartTime;
+		LARGE_INTEGER m_StopTime;
+#endif // AE_WINDOWS
+		double m_ElapsedTime;
+		bool m_IsRunning;
 	};
 }

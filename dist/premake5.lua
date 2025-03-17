@@ -13,7 +13,8 @@ workspace "Log"
 
     filter "configurations:Dist"
         defines { "AE_DIST" }
-        optimize "On"
+        optimize "Speed"
+        symbols "Off"
 
     filter "action:vs*"
         startproject "Sandbox"

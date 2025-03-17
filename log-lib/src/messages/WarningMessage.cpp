@@ -17,5 +17,5 @@ void ae::WarningMessage::Log() const
 	ae::Console::GetInstance().SetForegroundColor(ae::ConsoleForegroundColor::LightYellow);
 	ae::Console::GetInstance().SetBackgroundColor(ae::ConsoleBackgroundColor::Black);
 
-	std::cout << m_Message.str() << "'" << std::endl;
+	std::cout << m_Message.str() << "'\n" << std::endl;
 }
