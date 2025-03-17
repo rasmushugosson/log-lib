@@ -6,9 +6,18 @@ This library provides a simple logging system, and some additional utility funct
 
 ## Getting started
 
-To build this library, clone the repository and run the provided `Premake5` script in the `dev` folder. If using `Windows` with `Visual Studio 2022`, there is a provided `bat` file that builds a solution file.
+1. **Clone the repository** and open a terminal in the project root.
+2. Navigate into the `dev` folder and **Run the provided `Premake5` script**.
+   - If you’re on **Windows** with **Visual Studio 2022**, use the included `.bat` file to generate a `.sln` solution.
+   - Otherwise, run `premake5` with the appropriate arguments to generate project files for your platform and IDE of choice.
+3. **Open the generated solution/project** in your IDE and build the `Sandbox` project. The resulting binaries will appear in the `bin` folder.
+4. **Run the `Sandbox` project** to verify that the library and dependencies are set up correctly.
 
-Open the project in your IDE of choice and build the project. The library will be built in the `bin` folder. Running the the `Sandbox` project will ensure that the library is working correctly.
+### Additional Dependencies
+
+- **Premake5:** This library uses [Premake5](https://premake.github.io/) as its build configuration tool.  
+  Ensure that `premake5` is installed on your system or copied into the `dev` folder.  
+  You can download it [here](https://premake.github.io/download/).
 
 ## Usage
 
@@ -16,7 +25,7 @@ To use the library, include the `Log.h` header file in your project. The logger 
 
 Log messages include a severity level, information about the file and line number, and the message itself. This is displayed with suitable colors corresponding to the selected severity. The logger is also configured to only log messages for specified build types.
 
-![Logger](documentation/example.png)
+![Logger](docs/example.png)
 
 In addition to the logging functionality, there are also macros for throwing exceptions with messages. The exceptions are formatted in the same way as the log messages. Furthermore, there is basic functionality for timing code execution.
 
