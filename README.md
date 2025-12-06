@@ -2,21 +2,58 @@
 
 ## General
 
-This library provides a simple logging system, and some additional utility functionality for `C++` projects. The library is built using [Premake5](https://premake.github.io/) for `C++20`.
+This library provides a simple logging system, and some additional utility functionality for `C++` projects. The library is built using [Premake5](https://premake.github.io/) for `C++23`.
 
 ## Getting started
 
 1. **Clone the repository** and open a terminal in the project root.
-2. Navigate into the `dev` folder and **Run the provided `Premake5` script**.
-   - If you’re on **Windows** with **Visual Studio 2022**, use the included `.bat` file to generate a `.sln` solution.
-   - Otherwise, run `premake5` with the appropriate arguments to generate project files for your platform and IDE of choice.
-3. **Open the generated solution/project** in your IDE and build the `Sandbox` project. The resulting binaries will appear in the `bin` folder.
-4. **Run the `Sandbox` project** to verify that the library and dependencies are set up correctly.
+
+The next steps depend on your perferred build system below.
+
+### Visual Studio
+
+2. Run `premake5 vs20XX` to generate a Visual Studio solution file (`.sln`).
+3. Open the solution file in Visual Studio and build using MSVC.
+
+### Gmake (force G++)
+
+2. Run the pre-defined action `premake5 gmake-gcc` to generate make files spcifically for gcc.
+3. Navigate into `/build/[os]-gcc` where the `Makefile` is created.
+4. Run `make config=[build type]` where the possible options are `debug`, `release` or `dist`.
+5. Navigate into `/bin/Sandbox/[build type]` and run the `Sandbox` executable.
+ 
+### Gmake (force Clang++)
+
+2. Run the pre-defined action `premake5 gmake-clang` to generate make files spcifically for clang.
+3. Navigate into `/build/[os]-clang` where the `Makefile` is created.
+4. Run `make config=[build type]` where the possible options are `debug`, `release` or `dist`.
+5. Navigate into `/bin/Sandbox/[build type]` and run the `Sandbox` executable.
+
+### Formatting and linting
+
+There are additional actions for formatting with `clang-format` and linting through `clang-tidy`. These are run through:
+
+```bash
+# Run clang-format
+premake5 format
+
+# Run clang-tidy
+premake5 lint
+
+# Run clang-tidy and apply fixes
+premake5 lint-fix
+```
+
+These commands assume `clang-format` and `clang-tidy` are installed on your system.
+
+### Clangd
+
+If you use `clangd` for intellisense and code completion, the provided `gen-build-cmds.sh` script will generate build commands for `clangd`. This will call `premake5 gmake-clang` and use `bear` to generate the build commands. Both `clang` and `bear` are assumed to be installed on your system.
 
 ### Additional Dependencies
 
 - **Premake5:** This library uses [Premake5](https://premake.github.io/) as its build configuration tool.  
-  Ensure that `premake5` is installed on your system or copied into the `dev` folder.  
+  Ensure that `premake5` is installed on your system or copied into the `root` folder.  
   You can download it [here](https://premake.github.io/download/).
 
 ## Usage
@@ -27,84 +64,56 @@ Log messages include a severity level, information about the file and line numbe
 
 ![Logger](docs/example.png)
 
+Where logs are written is determined through adding sinks to the Logger singleton. Multiple console and/or file sinks with a specified severity range can be added to control what logs end up where. For example, this makes it possible to log everything to the console but only record the errors in a dedicated error file.  
+
 In addition to the logging functionality, there are also macros for throwing exceptions with messages. The exceptions are formatted in the same way as the log messages. Furthermore, there is basic functionality for timing code execution.
 
 ## Example of usage
 
-Below is an example program that demonstrates how to use the logging system.
+Below is some example code demonstrating basic usage.
 
 ```c++
-// Sandbox.cpp
 #include "Log.h"
 
-int main()
+void Demo()
 {
-  // Author: Rasmus Hugosson
-  // Date: 2025-03-17
+    // Author: Rasmus Hugosson
+    // Date: 2025-12-06
 
-  // Description: This is a simple example of how to use the logging system
+    // Description: This is a simple example of how to use this library (see /sandbox/src/Sandbox.cpp for full demo)
 
-  // Let's start by logging a simple message with the following macro
-  AE_LOG_CONSOLE(AE_INFO, "Hello World!");
-  AE_LOG_CONSOLE_NEWLINE();
+    // Let's start by adding a sink where the logs will show up
+    ae::Logger::Get().AddConsoleSink("Console", ae::LogSinkConsoleKind::STDOUT, AE_TRACE); // AE_TRACE means trace or higher severity will be logged here
+    ae::Logger::Get().AddFileSink("Error file", "logs/errors.txt", AE_ERROR); // Only errors or fatal errors will be recorded here
 
-  // There are 5 log levels: Trace, Info, Warning, Error, Fatal
-  // The log levels are color coded and a tag is displayed before the message
-  AE_LOG_CONSOLE(AE_TRACE, "This message is not important");
-  AE_LOG_CONSOLE(AE_INFO, "This is an info message");
-  AE_LOG_CONSOLE(AE_WARNING, "This is a warning!");
-  AE_LOG_CONSOLE(AE_ERROR, "This is an error!");
-  AE_LOG_CONSOLE(AE_FATAL, "This is a fatal error!");
+    // Now we can log a simple message with the following macro
+    AE_LOG(AE_INFO, "Hello World!");
+    // A special macro is provided for blank lines since printing "\n" manually can result in incorrect formatting
+    AE_LOG_NEWLINE();
 
-  AE_LOG_CONSOLE_NEWLINE();
+    // There are 5 log levels: Trace, Info, Warning, Error, Fatal
+    // The log levels are color coded and a tag is displayed before the message
+    AE_LOG(AE_TRACE, "This message is not important");
+    AE_LOG(AE_INFO, "This is an infomtion message");
+    AE_LOG(AE_WARNING, "This is a warning!");
+    AE_LOG(AE_ERROR, "This is an error!");
+    AE_LOG(AE_FATAL, "This is a fatal error!");
 
-  // By default, the log messages are only displayed in the console in debug mode
-  // But this can also be explicetly specified
-  AE_LOG_CONSOLE_DEBUG(AE_INFO, "This is a debug mode info message");
-  AE_LOG_CONSOLE_NEWLINE_DEBUG();
+    AE_LOG_NEWLINE();
 
-  // In release mode, only the release log messages are displayed
-  AE_LOG_CONSOLE_RELEASE(AE_INFO, "This is a release mode info message");
-  AE_LOG_CONSOLE_NEWLINE_RELEASE();
-
-  // Messages can also be logged for both debug and release mode
-  AE_LOG_CONSOLE_ALL(AE_INFO, "This is a message for both debug and release mode");
-  AE_LOG_CONSOLE_NEWLINE_ALL();
-
-  // Any data type with an overloaded << operator for std::ostream can be logged
-  AE_LOG_CONSOLE(AE_TRACE, "The answer to life, the universe and everything is " << 42);
-  AE_LOG_CONSOLE(AE_TRACE, 3.14159265359 << " is the value of pi");
-
-  // This library also provides a way to throw exceptions with a message  	try
-  {
-    // The exception messages are specified in the same way as the log messages
-    AE_THROW_MATH_ERROR("Division by zero. " << 1 << "/" << 0 << " is not a vaild operation");
-  }
-
-  catch (const std::exception& e)
-  {
-    // The exception can be caught as usual and the message can be logged
-    AE_LOG_CONSOLE_ALL(AE_ERROR, e.what());
-  }
-
-  // Execution time can also be measured with the Timer class
-  ae::Timer timer;
-  timer.Start();
-
-  // We can then make the thread sleep for a while
-  ae::Time::Wait(1.0);
-
-  // And then measure the elapsed time
-  AE_LOG_CONSOLE(AE_INFO, "Elapsed time: " << timer.GetElapsedTime() << " s");
-
-#ifdef AE_DIST
-  // No messages are printed for distribution builds
-  // If something is to be logged in a distribution build, it can be done with standard C++ functions
-  std::cout << "This message is only displayed in distribution builds" << std::endl;
-#endif // AE_DIST
-  return 0;
+    // All log messages can be formatted through std::format, like using normal std::print
+    AE_LOG(AE_TRACE, "The answer to life, the universe and everything is {}", 42);
+    AE_LOG(AE_TRACE, "{} is the value of pi", 3.14159265359);
 }
 ```
+
+An extended example of how this library can be used is provided in `/sandbox/src/Sandbox.cpp`. See this file for further information regarding functionality.
+
+### Supported Platforms
+
+- Windows (MSVC)
+- Linux (GCC / Clang)
+- Likely MacOS (not yet tested, but ANSI branch is portable)
 
 ## License
 

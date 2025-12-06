@@ -360,6 +360,14 @@ MigrationBackup/
 res/outputs
 *.exe
 
+# Gmake
+/build
+/obj
+/bin
+
+# Clang
+compile_commands.json
+
 # Python
 
 .venv/
