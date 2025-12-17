@@ -1,7 +1,5 @@
 #include "Log.h"
 
-#include <print>
-
 void Demo()
 {
     // Author: Rasmus Hugosson
