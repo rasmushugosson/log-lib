@@ -1,6 +1,7 @@
 #include "Log.h"
 #include "general/pch.h"
 
+#include <filesystem>
 #include <print>
 
 constexpr static std::array<std::string_view, 5> c_LevelLookup = { "TRACE", "INFO", "WARNING", "ERROR", "FATAL" };
