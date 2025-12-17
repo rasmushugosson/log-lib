@@ -30,19 +30,14 @@ local function workspace_location()
 			return "build/macos"
 		end
 	end
-	-- Fallback
 	return "build"
 end
 
-workspace("LogLib")
+workspace("Sandbox")
 location(workspace_location())
 architecture("x64")
 configurations({ "Debug", "Release", "Dist" })
 warnings("Extra")
-
----------------------------------------
---  Platform defines
----------------------------------------
 
 filter("system:windows")
 defines({ "AE_WINDOWS" })
@@ -54,10 +49,6 @@ filter("system:linux")
 defines({ "AE_LINUX" })
 
 filter({})
-
----------------------------------------
---  Config-specific defines
----------------------------------------
 
 filter("configurations:Debug")
 defines({ "AE_DEBUG" })
@@ -74,10 +65,6 @@ symbols("Off")
 
 filter({})
 
----------------------------------------
---  MSVC runtime (/MDd, /MD)
----------------------------------------
-
 filter({ "action:vs*", "configurations:Debug" })
 runtime("Debug")
 
@@ -87,10 +74,6 @@ runtime("Release")
 filter("action:vs*")
 startproject("Sandbox")
 filter({})
-
----------------------------------------
---  Compiler / toolchain configuration
----------------------------------------
 
 filter({ "system:linux or system:macosx" })
 if is_clang() then
@@ -112,26 +95,7 @@ else
 end
 filter({})
 
----------------------------------------
---  Log library
----------------------------------------
-
-project("Log")
-kind("StaticLib")
-language("C++")
-cppdialect("C++23")
-objdir("obj/%{prj.name}/%{cfg.buildcfg}")
-targetdir("bin/%{prj.name}/%{cfg.buildcfg}")
-
-files({ "log-lib/src/**.cpp", "log-lib/src/**.h", "log-lib/include/**.h" })
-includedirs({ "log-lib/include", "log-lib/src" })
-
-pchheader(path.getabsolute("log-lib/src/general/pch.h"))
-pchsource("log-lib/src/general/pch.cpp")
-
----------------------------------------
---  Sandbox (exe)
----------------------------------------
+include("log-project.lua")
 
 project("Sandbox")
 kind("ConsoleApp")
@@ -149,10 +113,6 @@ includedirs({
 
 links({ "Log" })
 
----------------------------------------
---  Source file discovery for tools
----------------------------------------
-
 local function own_source_files()
 	local files = {}
 
@@ -162,13 +122,11 @@ local function own_source_files()
 		end
 	end
 
-	-- log-lib
 	add("log-lib/src/**.cpp")
 	add("log-lib/src/**.c")
 	add("log-lib/include/**.h")
 	add("log-lib/include/**.hpp")
 
-	-- sandbox
 	add("sandbox/src/**.cpp")
 	add("sandbox/src/**.c")
 	add("sandbox/src/**.h")
@@ -176,10 +134,6 @@ local function own_source_files()
 
 	return files
 end
-
----------------------------------------
---  premake5 format  (clang-format)
----------------------------------------
 
 newaction({
 	trigger = "format",
@@ -203,10 +157,6 @@ newaction({
 	end,
 })
 
----------------------------------------
---  premake5 lint / lint-fix (clang-tidy)
----------------------------------------
-
 local function run_clang_tidy(fix_mode)
 	local all_files = own_source_files()
 	local cpp_files = {}
@@ -223,7 +173,6 @@ local function run_clang_tidy(fix_mode)
 		return
 	end
 
-	-- compile_commands.json is in the root directory
 	local build_dir = "."
 
 	local mode_label = fix_mode and "lint + fix" or "lint"
@@ -269,10 +218,6 @@ newaction({
 		run_clang_tidy(true)
 	end,
 })
-
----------------------------------------
---  Convenience actions: gmake for GCC / Clang
----------------------------------------
 
 newaction({
 	trigger = "gmake-gcc",
