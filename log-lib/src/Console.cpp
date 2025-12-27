@@ -151,8 +151,6 @@ constexpr std::array<BgAnsiCode, 5> c_BackgroundLookup = {
 
 #endif // AE_WINDOWS
 
-ae::Console ae::Console::m_Instance;
-
 ae::Console::Console()
 #ifdef AE_WINDOWS
     : m_ForegroundColor(static_cast<ConsoleColorCode>(g_DefaultFg)),

@@ -7,8 +7,6 @@
 
 constexpr static std::array<std::string_view, 5> c_LevelLookup = { "TRACE", "INFO", "WARNING", "ERROR", "FATAL" };
 
-ae::Logger ae::Logger::m_Instance;
-
 ae::Logger::Logger()
     : m_OpenMessage(c_LogLibVersion), m_StartPoint(DateTime::SteadyNow()), m_StartDate(DateTime::DateAsString()),
       m_StartTime(DateTime::TimeAsString())

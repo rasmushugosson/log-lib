@@ -112,7 +112,8 @@ class Logger
 
     inline static Logger &Get()
     {
-        return m_Instance;
+        static Logger instance;
+        return instance;
     }
 
     template <class... Args>
@@ -214,8 +215,6 @@ class Logger
     std::string m_StartDate;
     std::string m_StartTime;
     Timer m_ExecutionTimer;
-
-    static Logger m_Instance;
 };
 
 class Console
@@ -232,7 +231,8 @@ class Console
 
     inline static Console &GetInstance()
     {
-        return m_Instance;
+        static Console instance;
+        return instance;
     }
 
     void SetColor(LogLevel level);
@@ -248,9 +248,6 @@ class Console
 #endif
     ConsoleColorCode m_ForegroundColor;
     ConsoleColorCode m_BackgroundColor;
-
-  private:
-    static Console m_Instance;
 };
 
 #define AE_TRACE ae::LogLevel::TRACE
