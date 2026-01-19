@@ -29,7 +29,7 @@ The next steps depend on your preferred build system below.
 4. Run `make config=[build type]` where the possible options are `debug`, `release` or `dist`.
 5. Navigate into `/bin/Sandbox/[build type]` and run the `Sandbox` executable.
 
-### Formatting and linting
+### Formatting and Linting
 
 There are additional actions for formatting with `clang-format` and linting through `clang-tidy`. These are run through:
 
