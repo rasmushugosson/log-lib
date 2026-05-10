@@ -15,6 +15,8 @@
 
 #ifdef AE_WINDOWS
 #include <Windows.h>
+#else
+#include <unistd.h>
 #endif // AE_WINDOWS
 
 #include "Log.h"
